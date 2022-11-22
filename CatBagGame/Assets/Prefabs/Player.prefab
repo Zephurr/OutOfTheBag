@@ -140,6 +140,8 @@ MonoBehaviour:
   interactLayerMask:
     serializedVersion: 2
     m_Bits: 128
+  escapeTime: 1
+  escapeTimeRate: 0.5
 --- !u!95 &5741091926923292103
 Animator:
   serializedVersion: 4

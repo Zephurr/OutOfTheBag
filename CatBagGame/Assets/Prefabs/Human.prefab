@@ -447,6 +447,7 @@ MonoBehaviour:
   caughtPlayer: 0
   chasingPlayer: 0
   seeingPlayer: 0
+  canSeePlayer: 1
   headRotateOffset: 180
   playerSightStay: 0
   playerSightLimit: 1
@@ -462,9 +463,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 453a93e073d17f249b53288cb2bf3540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveToggle: 1
+  startPoint: {x: 0, y: 0, z: 0}
   speed: 5
   target: {fileID: 0}
+  hitObstacle: 0
+  newPoint: {x: 0, y: 0, z: 0}
   unPaused: 1
+  pointB: {x: 0, y: 0, z: 0}
+  pointA: {x: 0, y: 0, z: 0}
 --- !u!61 &1389081170129802649
 BoxCollider2D:
   m_ObjectHideFlags: 0

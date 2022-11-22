@@ -15,7 +15,7 @@ public class HumanSight : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject == player)
+        if (collision.gameObject == player && human.GetComponent<HumanBehaviour>().CanSeePlayer)
         {
             human.GetComponent<HumanBehaviour>().SeePlayer();
         }

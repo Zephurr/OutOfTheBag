@@ -14,13 +14,17 @@ public class HumanBehaviour : MonoBehaviour
     [SerializeField] bool chasingPlayer = false;
 
     [SerializeField] bool seeingPlayer = false;
+    [SerializeField] bool canSeePlayer = true;
 
     [SerializeField] float headRotateOffset;
 
     [SerializeField] float playerSightStay = 0;
     [SerializeField] private float playerSightLimit;
 
+    bool catchPlayer = true;
+
     public bool SeeingPlayer { get => seeingPlayer; set => seeingPlayer = value; }
+    public bool CanSeePlayer { get => canSeePlayer; set => canSeePlayer = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -61,7 +65,7 @@ public class HumanBehaviour : MonoBehaviour
         }
         if (playerSightStay >= playerSightLimit)
         {
-            Debug.Log("Cat is out of the bag!");
+           //Debug.Log("Cat is out of the bag!");
             GetComponent<Patrol>().StopAllCoroutines();
             chasingPlayer = true;
             ChasePlayer();
@@ -71,6 +75,8 @@ public class HumanBehaviour : MonoBehaviour
     public void StopSeeingPlayer()
     {
         seeingPlayer = false;
+        GetComponent<Patrol>().HitObstacle = false;
+        CanSeePlayer = true;
 
         neck.transform.transform.rotation = Quaternion.Euler(0, 0, 0);
 
@@ -81,27 +87,32 @@ public class HumanBehaviour : MonoBehaviour
         if (chasingPlayer)
         {
             chasingPlayer = false;
+            catchPlayer = true;
             StartCoroutine(ReturnToStart());
         }
     }
 
     IEnumerator ReturnToStart()
     {
+        transform.Rotate(0, 180, 0);
+        GetComponent<Patrol>().MoveToggle = !GetComponent<Patrol>().MoveToggle;
         Vector3 pos = transform.position;
         Debug.Log("return to start");
         float timeElapsed = 0;
         while (timeElapsed < (chaseSpeed * 2))
         {
             timeElapsed += Time.deltaTime;
-            transform.position = Vector3.Lerp(pos, GetComponent<Patrol>().StartPoint, timeElapsed / (chaseSpeed * 2));
+            transform.position = Vector3.Lerp(pos, GetComponent<Patrol>().PointA, timeElapsed / (chaseSpeed * 2));
 
             yield return null;
         }
-        transform.position = GetComponent<Patrol>().StartPoint;
+        transform.position = GetComponent<Patrol>().PointA;
 
         Debug.Log("patrol");
-        GetComponent<Patrol>().MoveToggle = true;
-        GetComponent<Patrol>().StartCoroutine(GetComponent<Patrol>().LerpToPoint(GetComponent<Patrol>().Target.transform.position));
+        transform.Rotate(0, 180, 0);
+        GetComponent<Patrol>().MoveToggle = !GetComponent<Patrol>().MoveToggle;
+        GetComponent<Patrol>().StartCoroutine(GetComponent<Patrol>().LerpToPoint(GetComponent<Patrol>().PointB));
+        CanSeePlayer = true;
     }
 
     public void ChasePlayer()
@@ -113,11 +124,28 @@ public class HumanBehaviour : MonoBehaviour
         }
         else
         {
-            Debug.Log("Caught player!");
+            //Debug.Log("Caught player!");
 
-            player.GetComponent<PlayerBehaviour>().CanMove = false;
-            player.GetComponent<PlayerBehaviour>().EscapePets();
+            if (catchPlayer)
+            {
+                Debug.Log("Catch player");
+                CatchPlayer();
+            }
+
+            if (player.GetComponent<PlayerBehaviour>().Escaped && CanSeePlayer)
+            {
+                CanSeePlayer = false;
+                caughtPlayer = false;
+                StopSeeingPlayer();
+            }
         }        
+    }
+
+    public void CatchPlayer()
+    {
+        catchPlayer = false;
+        player.GetComponent<PlayerBehaviour>().CanMove = false;
+        player.GetComponent<PlayerBehaviour>().EscapePets();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

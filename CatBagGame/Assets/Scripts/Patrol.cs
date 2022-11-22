@@ -12,24 +12,31 @@ using UnityEngine;
 public class Patrol : MonoBehaviour
 {
     // Zayden: toggle for which direction the ghost moves
-    private bool moveToggle = true;
+    [SerializeField] private bool moveToggle = true;
     // Zayden: the point the ghost starts at (one end of the patrol)
-    private Vector3 startPoint;
+    [SerializeField] private Vector3 startPoint;
     // Zayden: speed of movement
     [SerializeField] private float speed = 5;
     // Zayden: the other end of the patrol, based on an adjustable target gameobject
     [SerializeField] private GameObject target;
 
     // obstacle collision managers
-    bool hitObstacle = false;
-    Vector3 newPoint = new Vector3();
+    [SerializeField] bool hitObstacle = false;
+    [SerializeField] Vector3 newPoint = new Vector3();
     bool gotNewSpeed = false;
     float percent;
     public bool unPaused = true;
 
+    // the points to be lerped between
+    [SerializeField] Vector3 pointB;
+    [SerializeField] Vector3 pointA;
+
     public bool MoveToggle { get => moveToggle; set => moveToggle = value; }
     public Vector3 StartPoint { get => startPoint; set => startPoint = value; }
     public GameObject Target { get => target; set => target = value; }
+    public Vector3 PointA { get => pointA; set => pointA = value; }
+    public Vector3 PointB { get => pointB; set => pointB = value; }
+    public bool HitObstacle { get => hitObstacle; set => hitObstacle = value; }
 
     /// <summary>
     /// Zayden: start the patrol coroutine and get the start point
@@ -59,10 +66,6 @@ public class Patrol : MonoBehaviour
     {
         // save the speed variable in case the ghost runs into a box
         float initialSpeed = speed;
-
-        // the points to be lerped between
-        Vector3 pointB;
-        Vector3 pointA;
 
         // run the loop forever (currently)
         while (true)

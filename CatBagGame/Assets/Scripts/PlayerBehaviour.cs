@@ -32,11 +32,15 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField] float escapeTime;
     [SerializeField] float escapeTimeRate;
+    float escapingTime;
+    bool escaping = false;
+    bool escaped = true;
 
     public bool IsMoving { get => isMoving; set => isMoving = value; }
     public bool FacingRight { get => facingRight; set => facingRight = value; }
     public bool CanMove { get => canMove; set => canMove = value; }
     public float Speed { get => speed; set => speed = value; }
+    public bool Escaped { get => escaped; set => escaped = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -73,6 +77,25 @@ public class PlayerBehaviour : MonoBehaviour
         if (CanInteract() && Input.GetKeyDown(KeyCode.F))
         {
             Interact();
+        }
+
+        if (escaping)
+        {
+            //Debug.Log(escapingTime);
+            if (Input.GetAxis("Horizontal") != 0)
+            {
+               // Debug.Log("escaping");
+                escapingTime += escapeTimeRate * Time.deltaTime;
+            }
+
+            if (escapingTime >= escapeTime)
+            {
+                //Debug.Log("escaped");
+                canMove = true;
+                escaping = false;
+                escaped = true;
+
+            }
         }
     }
 
@@ -224,16 +247,9 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void EscapePets()
     {
-        float time = 0;
-        if (Input.GetAxis("Horizontal") > 0)
-        {
-            time += escapeTimeRate;
-        }
-
-        if (time >= escapeTime)
-        {
-            Debug.Log("escaped");
-            canMove = true;
-        }
+        CanMove = false;
+        escapingTime = 0;
+        escaped = false;
+        escaping = true;
     }
 }
