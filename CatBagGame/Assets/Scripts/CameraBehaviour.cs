@@ -40,7 +40,7 @@ public class CameraBehaviour : MonoBehaviour
     {
         Debug.Log("camera lerp");
 
-        player.GetComponent<Animator>().SetBool("walk", true);
+        player.GetComponent<PlayerBehaviour>().Animator.SetBool("walk", true);
 
         lerping = true;
         float timeElapsed = 0;
@@ -54,7 +54,7 @@ public class CameraBehaviour : MonoBehaviour
         }
         transform.position = newPoint;
         curXPointIndex = xPoints.IndexOf(newPoint.x);
-        player.GetComponent<Animator>().SetBool("walk", false);
+        player.GetComponent<PlayerBehaviour>().Animator.SetBool("walk", false);
         lerping = false;
     }
 }

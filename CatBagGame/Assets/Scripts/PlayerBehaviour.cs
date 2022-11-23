@@ -2,10 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+enum MovementMode
+{
+    Standing, Crouching
+}
+
 [RequireComponent(typeof(Rigidbody2D))]
+
 public class PlayerBehaviour : MonoBehaviour
 {
     [SerializeField] private float speed;
+    [SerializeField] private float walkingSpeed;
+    [SerializeField] private float crouchingSpeed;
     [SerializeField] private bool canMove = true;
     [SerializeField] private bool isMoving = false;
 
@@ -36,18 +44,30 @@ public class PlayerBehaviour : MonoBehaviour
     bool escaping = false;
     bool escaped = true;
 
+    MovementMode curMoveMode;
+
+    PolygonCollider2D pc2D;
+    PolygonCollider2D standingPc;
+    PolygonCollider2D crouchingPc;
+
     public bool IsMoving { get => isMoving; set => isMoving = value; }
     public bool FacingRight { get => facingRight; set => facingRight = value; }
     public bool CanMove { get => canMove; set => canMove = value; }
     public float Speed { get => speed; set => speed = value; }
     public bool Escaped { get => escaped; set => escaped = value; }
+    internal MovementMode CurMoveMode { get => curMoveMode; set => curMoveMode = value; }
+    public Animator Animator { get => animator; set => animator = value; }
 
     // Start is called before the first frame update
     void Start()
     {
-        rb2d = gameObject.GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        jumpForce = 18;
+        curMoveMode = MovementMode.Standing;
+        rb2d = GetComponent<Rigidbody2D>();
+        animator = transform.GetChild(0).GetComponent<Animator>();
+        pc2D = GetComponent<PolygonCollider2D>();
+        standingPc = transform.GetChild(0).GetComponent<PolygonCollider2D>();
+        crouchingPc = transform.GetChild(1).GetComponent<PolygonCollider2D>();
+        speed = walkingSpeed;
     }
 
     private void Update()
@@ -251,5 +271,37 @@ public class PlayerBehaviour : MonoBehaviour
         escapingTime = 0;
         escaped = false;
         escaping = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("LowObstacle"))
+        {
+            curMoveMode = MovementMode.Crouching;
+            speed = crouchingSpeed;
+
+            transform.GetChild(0).gameObject.SetActive(false);
+            transform.GetChild(1).gameObject.SetActive(true);
+
+            pc2D.points = crouchingPc.points;
+
+            animator = transform.GetChild(1).GetComponent<Animator>();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("LowObstacle"))
+        {
+            curMoveMode = MovementMode.Standing;
+            speed = walkingSpeed;
+
+            transform.GetChild(1).gameObject.SetActive(false);
+            transform.GetChild(0).gameObject.SetActive(true);
+
+            pc2D.points = standingPc.points;
+
+            animator = transform.GetChild(0).GetComponent<Animator>();
+        }
     }
 }

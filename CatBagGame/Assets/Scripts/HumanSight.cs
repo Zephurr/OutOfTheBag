@@ -15,7 +15,7 @@ public class HumanSight : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject == player && human.GetComponent<HumanBehaviour>().CanSeePlayer)
+        if (collision.gameObject == player && human.GetComponent<HumanBehaviour>().CanSeePlayer && player.GetComponent<PlayerBehaviour>().CurMoveMode == MovementMode.Standing)
         {
             human.GetComponent<HumanBehaviour>().SeePlayer();
         }
@@ -23,7 +23,7 @@ public class HumanSight : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject == player)
+        if (collision.gameObject == player && human.GetComponent<HumanBehaviour>().SeeingPlayer)
         {
             human.GetComponent<HumanBehaviour>().StopSeeingPlayer();
         }
