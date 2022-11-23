@@ -15,13 +15,13 @@ public class CameraBehaviour : MonoBehaviour
     void Start()
     {
         curXPointIndex = xPoints.IndexOf(Camera.main.transform.position.x);
+        player = FindObjectOfType<PlayerBehaviour>().gameObject;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player") && !lerping)
         {
-            player = collision.gameObject;
             Debug.Log("camera move");
             if (collision.gameObject.transform.position.x < Camera.main.transform.position.x && curXPointIndex != 0)
             {
@@ -39,8 +39,9 @@ public class CameraBehaviour : MonoBehaviour
     IEnumerator LerpToPoint(Vector3 startPoint, Vector3 newPoint)
     {
         Debug.Log("camera lerp");
-
         player.GetComponent<PlayerBehaviour>().Animator.SetBool("walk", true);
+
+        player.GetComponent<PlayerBehaviour>().enabled = false;
 
         lerping = true;
         float timeElapsed = 0;
@@ -55,6 +56,8 @@ public class CameraBehaviour : MonoBehaviour
         transform.position = newPoint;
         curXPointIndex = xPoints.IndexOf(newPoint.x);
         player.GetComponent<PlayerBehaviour>().Animator.SetBool("walk", false);
+
+        player.GetComponent<PlayerBehaviour>().enabled = true;
         lerping = false;
     }
 }

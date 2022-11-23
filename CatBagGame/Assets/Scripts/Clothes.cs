@@ -6,11 +6,14 @@ public class Clothes : InteractableObject
 {
     [SerializeField] float spriteXOffset;
     GameObject player;
+    GameManager gm;
     bool isGrabbed = false;
+    bool canScore = true;
 
     private void Start()
     {
         player = FindObjectOfType<PlayerBehaviour>().gameObject;
+        gm = FindObjectOfType<GameManager>();
     }
 
     private void Update()
@@ -46,5 +49,14 @@ public class Clothes : InteractableObject
         isGrabbed = false;
 
         hasBeenInteracted = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("UnderObject") && canScore)
+        {
+            gm.UpdateScore();
+            canScore = false;
+        }
     }
 }

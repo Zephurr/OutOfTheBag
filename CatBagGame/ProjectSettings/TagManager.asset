@@ -8,6 +8,7 @@ TagManager:
   - Water
   - HumanBody
   - LowObstacle
+  - UnderObject
   layers:
   - Default
   - TransparentFX

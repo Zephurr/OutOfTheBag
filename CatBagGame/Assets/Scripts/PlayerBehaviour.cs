@@ -15,6 +15,7 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField] private float walkingSpeed;
     [SerializeField] private float crouchingSpeed;
     [SerializeField] private bool canMove = true;
+    [SerializeField] private bool canJump = true;
     [SerializeField] private bool isMoving = false;
 
     [SerializeField] private Vector3 jumpDir;
@@ -34,6 +35,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     Rigidbody2D rb2d;
     Animator animator;
+    [SerializeField] Sprite crouchSprite;
 
     private bool facingRight = true;
     Vector2 interactDir = Vector2.right;
@@ -49,6 +51,8 @@ public class PlayerBehaviour : MonoBehaviour
     PolygonCollider2D pc2D;
     PolygonCollider2D standingPc;
     PolygonCollider2D crouchingPc;
+
+    bool shortCooldown = false;
 
     public bool IsMoving { get => isMoving; set => isMoving = value; }
     public bool FacingRight { get => facingRight; set => facingRight = value; }
@@ -81,7 +85,7 @@ public class PlayerBehaviour : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
 
-        if (canMove)
+        if (canMove && canJump)
         {
             if (CanJump() && Input.GetKeyDown(KeyCode.Space))
             {
@@ -277,6 +281,9 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("LowObstacle"))
         {
+            StartCoroutine(ShortCooldown(0.5f));
+            Debug.Log("Crouching");
+            canJump = false;
             curMoveMode = MovementMode.Crouching;
             speed = crouchingSpeed;
 
@@ -291,11 +298,13 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("LowObstacle"))
+        if (collision.gameObject.CompareTag("LowObstacle") && !shortCooldown)
         {
             curMoveMode = MovementMode.Standing;
             speed = walkingSpeed;
 
+            Debug.Log("Standing up");
+            canJump = true;
             transform.GetChild(1).gameObject.SetActive(false);
             transform.GetChild(0).gameObject.SetActive(true);
 
@@ -303,5 +312,12 @@ public class PlayerBehaviour : MonoBehaviour
 
             animator = transform.GetChild(0).GetComponent<Animator>();
         }
+    }
+
+    IEnumerator ShortCooldown(float seconds)
+    {
+        shortCooldown = true;
+        yield return new WaitForSecondsRealtime(seconds);
+        shortCooldown = false;
     }
 }
