@@ -78,6 +78,9 @@ public class HumanBehaviour : MonoBehaviour
         GetComponent<Patrol>().HitObstacle = false;
         CanSeePlayer = true;
 
+        FindObjectOfType<CameraBehaviour>().FollowPlayer = false;
+        FindObjectOfType<CameraBehaviour>().SnapToPosition();
+
         neck.transform.transform.rotation = Quaternion.Euler(0, 0, 0);
 
         playerSightStay = 0;
@@ -117,6 +120,7 @@ public class HumanBehaviour : MonoBehaviour
 
     public void ChasePlayer()
     {
+        FindObjectOfType<CameraBehaviour>().FollowPlayer = true;
         if (!caughtPlayer)
         {
             Vector3 target = new Vector3(player.transform.position.x, transform.position.y);
