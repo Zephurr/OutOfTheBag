@@ -20,6 +20,8 @@ public class Cup : MonoBehaviour
         {
             Physics2D.IgnoreCollision(transform.parent.GetComponent<Collider2D>(),
                 FindObjectOfType<PlayerBehaviour>().GetComponent<Collider2D>());
+            Physics2D.IgnoreLayerCollision(transform.parent.gameObject.layer, LayerMask.NameToLayer("Interactable"));
+
             GameObject waterPrefab = Instantiate(waterParticles, transform.position, Quaternion.identity);
             waterPrefab.transform.up = transform.up;
 

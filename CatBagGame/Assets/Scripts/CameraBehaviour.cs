@@ -2,12 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+enum Direction
+{
+    Left, Right
+}
+
 public class CameraBehaviour : MonoBehaviour
 {
     [SerializeField] List<float> xPoints;
     [SerializeField] int curXPointIndex;
     [SerializeField] float lerpSpeed;
     bool lerping = false;
+
+    Direction curDirection;
 
     GameObject player;
 
@@ -26,11 +33,13 @@ public class CameraBehaviour : MonoBehaviour
             if (collision.gameObject.transform.position.x < Camera.main.transform.position.x && curXPointIndex != 0)
             {
                 Debug.Log("camera move left");
+                curDirection = Direction.Left;
                 StartCoroutine(LerpToPoint(Camera.main.transform.position, new Vector3(xPoints[curXPointIndex - 1], Camera.main.transform.position.y, Camera.main.transform.position.z)));
             }
             else if (collision.gameObject.transform.position.x > Camera.main.transform.position.x && curXPointIndex != xPoints.Count - 1)
             {
                 Debug.Log("camera move right");
+                curDirection = Direction.Right;
                 StartCoroutine(LerpToPoint(Camera.main.transform.position, new Vector3(xPoints[curXPointIndex + 1], Camera.main.transform.position.y, Camera.main.transform.position.z)));
             }
         }
@@ -43,13 +52,25 @@ public class CameraBehaviour : MonoBehaviour
 
         player.GetComponent<PlayerBehaviour>().enabled = false;
 
+        float speed;
+        if (curDirection == Direction.Right)
+        {
+            speed = 2f;
+        }
+        else
+        {
+            speed = -2f;
+        }
+
         lerping = true;
         float timeElapsed = 0;
         while (timeElapsed < lerpSpeed)
         {
             timeElapsed += Time.deltaTime;
             Camera.main.transform.position = Vector3.Lerp(startPoint, newPoint, timeElapsed / lerpSpeed);
-            player.transform.Translate((player.GetComponent<PlayerBehaviour>().Speed / 2) * Time.deltaTime, 0, 0);
+            //player.transform.Translate(speed * Time.deltaTime, 0, 0);
+
+            player.transform.position = new Vector3(player.transform.position.x + speed * Time.deltaTime, player.transform.position.y, player.transform.position.z);
             
             yield return null;
         }

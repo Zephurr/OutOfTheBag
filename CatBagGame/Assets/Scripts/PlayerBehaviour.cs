@@ -17,6 +17,7 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField] private bool canMove = true;
     [SerializeField] private bool canJump = true;
     [SerializeField] private bool isMoving = false;
+    [SerializeField] private bool canSwitchDirection = true;
 
     [SerializeField] private Vector3 jumpDir;
     [SerializeField] private float jumpForce;
@@ -52,8 +53,6 @@ public class PlayerBehaviour : MonoBehaviour
     PolygonCollider2D standingPc;
     PolygonCollider2D crouchingPc;
 
-    bool shortCooldown = false;
-
     public bool IsMoving { get => isMoving; set => isMoving = value; }
     public bool FacingRight { get => facingRight; set => facingRight = value; }
     public bool CanMove { get => canMove; set => canMove = value; }
@@ -61,6 +60,9 @@ public class PlayerBehaviour : MonoBehaviour
     public bool Escaped { get => escaped; set => escaped = value; }
     internal MovementMode CurMoveMode { get => curMoveMode; set => curMoveMode = value; }
     public Animator Animator { get => animator; set => animator = value; }
+    public bool CanSwitchDirection { get => canSwitchDirection; set => canSwitchDirection = value; }
+    public float CrouchingSpeed { get => crouchingSpeed; set => crouchingSpeed = value; }
+    public float WalkingSpeed { get => walkingSpeed; set => walkingSpeed = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -130,7 +132,7 @@ public class PlayerBehaviour : MonoBehaviour
             Move();
         }
 
-        if (Input.GetAxis("Horizontal") != 0)
+        if (Input.GetAxis("Horizontal") != 0 && canSwitchDirection)
         {
             if (Input.GetAxis("Horizontal") > 0 && !facingRight)
             {
@@ -281,7 +283,6 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("LowObstacle"))
         {
-            StartCoroutine(ShortCooldown(0.5f));
             Debug.Log("Crouching");
             canJump = false;
             curMoveMode = MovementMode.Crouching;
@@ -298,7 +299,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("LowObstacle") && !shortCooldown)
+        if (collision.gameObject.CompareTag("LowObstacle"))
         {
             curMoveMode = MovementMode.Standing;
             speed = walkingSpeed;
@@ -312,12 +313,5 @@ public class PlayerBehaviour : MonoBehaviour
 
             animator = transform.GetChild(0).GetComponent<Animator>();
         }
-    }
-
-    IEnumerator ShortCooldown(float seconds)
-    {
-        shortCooldown = true;
-        yield return new WaitForSecondsRealtime(seconds);
-        shortCooldown = false;
     }
 }

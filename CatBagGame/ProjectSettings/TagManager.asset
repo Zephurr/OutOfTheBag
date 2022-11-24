@@ -19,8 +19,8 @@ TagManager:
   - Platform
   - Interactable
   - CollideWithNothing
-  - 
-  - 
+  - Clothes
+  - CollideWithPlayer
   - 
   - 
   - 

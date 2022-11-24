@@ -5,6 +5,7 @@ using UnityEngine;
 public class Clothes : InteractableObject
 {
     [SerializeField] float spriteXOffset;
+    [SerializeField] float spriteYOffset;
     GameObject player;
     GameManager gm;
     bool isGrabbed = false;
@@ -28,7 +29,12 @@ public class Clothes : InteractableObject
             {
                 spriteXOffset *= -1;
             }
-            transform.position = new Vector3(player.transform.position.x + spriteXOffset, transform.position.y);
+
+            transform.parent.parent = player.transform;
+            player.GetComponent<PlayerBehaviour>().CanSwitchDirection = false;
+            player.GetComponent<PlayerBehaviour>().Speed = player.GetComponent<PlayerBehaviour>().CrouchingSpeed;
+
+            transform.position = new Vector3(player.transform.position.x + spriteXOffset, player.transform.position.y + spriteYOffset);
 
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
@@ -47,6 +53,9 @@ public class Clothes : InteractableObject
     void LetGo()
     {
         isGrabbed = false;
+        transform.parent.parent = null;
+        player.GetComponent<PlayerBehaviour>().CanSwitchDirection = true;
+        player.GetComponent<PlayerBehaviour>().Speed = player.GetComponent<PlayerBehaviour>().WalkingSpeed;
 
         hasBeenInteracted = false;
     }
