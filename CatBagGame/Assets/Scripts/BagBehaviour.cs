@@ -54,6 +54,8 @@ public class BagBehaviour : InteractableObject
         inBag = true;
         player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
 
+        player.GetComponent<PlayerBehaviour>().InBag = true;
+
         hasBeenInteracted = true;
     }
 
@@ -63,5 +65,6 @@ public class BagBehaviour : InteractableObject
         hasBeenInteracted = false;
         inBag = false;
         player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+        player.GetComponent<PlayerBehaviour>().InBag = false;
     }
 }

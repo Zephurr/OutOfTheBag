@@ -53,6 +53,8 @@ public class PlayerBehaviour : MonoBehaviour
     PolygonCollider2D standingPc;
     PolygonCollider2D crouchingPc;
 
+    bool inBag = false;
+
     public bool IsMoving { get => isMoving; set => isMoving = value; }
     public bool FacingRight { get => facingRight; set => facingRight = value; }
     public bool CanMove { get => canMove; set => canMove = value; }
@@ -63,6 +65,7 @@ public class PlayerBehaviour : MonoBehaviour
     public bool CanSwitchDirection { get => canSwitchDirection; set => canSwitchDirection = value; }
     public float CrouchingSpeed { get => crouchingSpeed; set => crouchingSpeed = value; }
     public float WalkingSpeed { get => walkingSpeed; set => walkingSpeed = value; }
+    public bool InBag { get => inBag; set => inBag = value; }
 
     // Start is called before the first frame update
     void Start()

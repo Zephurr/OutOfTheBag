@@ -2,12 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+enum FacingDirection
+{
+    Right, Left
+}
+
 public class HumanBehaviour : MonoBehaviour
 {
     GameObject head;
     GameObject sightRange;
     GameObject neck;
     GameObject player;
+
+    [SerializeField] FacingDirection curFd;
+
+    Vector3 startPos;
 
     [SerializeField] float chaseSpeed;
     [SerializeField] bool caughtPlayer = false;
@@ -29,6 +39,7 @@ public class HumanBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        startPos = transform.position;
         sightRange = transform.GetChild(1).gameObject;
         neck = transform.GetChild(0).gameObject;
         head = neck.transform.GetChild(0).gameObject;
@@ -48,16 +59,25 @@ public class HumanBehaviour : MonoBehaviour
         // then convert that angle to degrees
         float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
 
-        if (GetComponent<Patrol>().MoveToggle)
+        /*if (GetComponent<Patrol>().MoveToggle)
         {
             neck.transform.transform.rotation = Quaternion.Euler(0, 0, angle);
         }
         else
         {
-            neck.transform.transform.rotation = Quaternion.Euler(0, 0, angle + headRotateOffset);
+            neck.transform.transform.rotation = Quaternion.Euler(0, 180, angle + headRotateOffset);
+        }*/
+
+        if (curFd == FacingDirection.Left)
+        {
+            neck.transform.transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
+        else
+        {
+            neck.transform.transform.rotation = Quaternion.Euler(180, 0, -angle);
         }
 
-        GetComponent<Patrol>().unPaused = false;
+        //GetComponent<Patrol>().unPaused = false;
 
         if (player.GetComponent<PlayerBehaviour>().IsMoving)
         {
@@ -66,7 +86,7 @@ public class HumanBehaviour : MonoBehaviour
         if (playerSightStay >= playerSightLimit)
         {
            //Debug.Log("Cat is out of the bag!");
-            GetComponent<Patrol>().StopAllCoroutines();
+            //GetComponent<Patrol>().StopAllCoroutines();
             chasingPlayer = true;
             ChasePlayer();
         }
@@ -75,17 +95,17 @@ public class HumanBehaviour : MonoBehaviour
     public void StopSeeingPlayer()
     {
         seeingPlayer = false;
-        GetComponent<Patrol>().HitObstacle = false;
+        //GetComponent<Patrol>().HitObstacle = false;
         CanSeePlayer = true;
 
         FindObjectOfType<CameraBehaviour>().FollowPlayer = false;
         FindObjectOfType<CameraBehaviour>().SnapToPosition();
 
-        neck.transform.transform.rotation = Quaternion.Euler(0, 0, 0);
+        neck.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
         playerSightStay = 0;
 
-        GetComponent<Patrol>().unPaused = true;
+        //GetComponent<Patrol>().unPaused = true;
         Debug.Log("Stop seeing player");
         if (chasingPlayer)
         {
@@ -98,23 +118,25 @@ public class HumanBehaviour : MonoBehaviour
     IEnumerator ReturnToStart()
     {
         transform.Rotate(0, 180, 0);
-        GetComponent<Patrol>().MoveToggle = !GetComponent<Patrol>().MoveToggle;
+        //GetComponent<Patrol>().MoveToggle = !//GetComponent<Patrol>().MoveToggle;
         Vector3 pos = transform.position;
         Debug.Log("return to start");
         float timeElapsed = 0;
+
+        Vector3 newPos = new Vector3(startPos.x, transform.position.y, transform.position.z);
         while (timeElapsed < (chaseSpeed * 2))
         {
             timeElapsed += Time.deltaTime;
-            transform.position = Vector3.Lerp(pos, GetComponent<Patrol>().PointA, timeElapsed / (chaseSpeed * 2));
+            transform.position = Vector3.Lerp(pos, startPos, timeElapsed / (chaseSpeed * 2));
 
             yield return null;
         }
-        transform.position = GetComponent<Patrol>().PointA;
+        transform.position = startPos;
 
         Debug.Log("patrol");
         transform.Rotate(0, 180, 0);
-        GetComponent<Patrol>().MoveToggle = !GetComponent<Patrol>().MoveToggle;
-        GetComponent<Patrol>().StartCoroutine(GetComponent<Patrol>().LerpToPoint(GetComponent<Patrol>().PointB));
+        //GetComponent<Patrol>().MoveToggle = !//GetComponent<Patrol>().MoveToggle;
+        //GetComponent<Patrol>().StartCoroutine(//GetComponent<Patrol>().LerpToPoint(//GetComponent<Patrol>().PointB));
         CanSeePlayer = true;
     }
 
