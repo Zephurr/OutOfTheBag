@@ -33,6 +33,8 @@ public class HumanBehaviour : MonoBehaviour
 
     bool catchPlayer = true;
 
+    Animator animator;
+
     public bool SeeingPlayer { get => seeingPlayer; set => seeingPlayer = value; }
     public bool CanSeePlayer { get => canSeePlayer; set => canSeePlayer = value; }
 
@@ -44,6 +46,7 @@ public class HumanBehaviour : MonoBehaviour
         neck = transform.GetChild(0).gameObject;
         head = neck.transform.GetChild(0).gameObject;
         player = FindObjectOfType<PlayerBehaviour>().gameObject;
+        animator = GetComponent<Animator>();
     }
 
     public void SeePlayer()
@@ -88,18 +91,21 @@ public class HumanBehaviour : MonoBehaviour
            //Debug.Log("Cat is out of the bag!");
             //GetComponent<Patrol>().StopAllCoroutines();
             chasingPlayer = true;
+            animator.SetBool("Walking", true);
             ChasePlayer();
         }
     }
 
     public void StopSeeingPlayer()
     {
+        animator.SetBool("Petting", false);
+
         seeingPlayer = false;
         //GetComponent<Patrol>().HitObstacle = false;
         CanSeePlayer = true;
 
-        FindObjectOfType<CameraBehaviour>().FollowPlayer = false;
-        FindObjectOfType<CameraBehaviour>().SnapToPosition();
+        //FindObjectOfType<CameraBehaviour>().FollowPlayer = false;
+        //FindObjectOfType<CameraBehaviour>().SnapToPosition();
 
         neck.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
@@ -123,7 +129,7 @@ public class HumanBehaviour : MonoBehaviour
         Debug.Log("return to start");
         float timeElapsed = 0;
 
-        Vector3 newPos = new Vector3(startPos.x, transform.position.y, transform.position.z);
+        //Vector3 newPos = new Vector3(startPos.x, transform.position.y, transform.position.z);
         while (timeElapsed < (chaseSpeed * 2))
         {
             timeElapsed += Time.deltaTime;
@@ -133,7 +139,9 @@ public class HumanBehaviour : MonoBehaviour
         }
         transform.position = startPos;
 
-        Debug.Log("patrol");
+        animator.SetBool("Walking", false);
+
+        //Debug.Log("patrol");
         transform.Rotate(0, 180, 0);
         //GetComponent<Patrol>().MoveToggle = !//GetComponent<Patrol>().MoveToggle;
         //GetComponent<Patrol>().StartCoroutine(//GetComponent<Patrol>().LerpToPoint(//GetComponent<Patrol>().PointB));
@@ -142,7 +150,7 @@ public class HumanBehaviour : MonoBehaviour
 
     public void ChasePlayer()
     {
-        FindObjectOfType<CameraBehaviour>().FollowPlayer = true;
+        //FindObjectOfType<CameraBehaviour>().FollowPlayer = true;
         if (!caughtPlayer)
         {
             Vector3 target = new Vector3(player.transform.position.x, transform.position.y);
@@ -171,6 +179,9 @@ public class HumanBehaviour : MonoBehaviour
     {
         catchPlayer = false;
         player.GetComponent<PlayerBehaviour>().CanMove = false;
+
+        animator.SetBool("Walking", false);
+        animator.SetBool("Petting", true);
         player.GetComponent<PlayerBehaviour>().EscapePets();
     }
 
