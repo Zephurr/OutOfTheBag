@@ -262,8 +262,24 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 Debug.Log("Interacted with " + iObj.gameObject);
                 iObj.Interact();
+                if (iObj.gameObject.CompareTag("HumanBody") && curMoveMode == MovementMode.Standing)
+                {
+                    animator.SetBool("scare", true);
+                    StartCoroutine(AnimationCooldown("scare"));
+                }
+                if (iObj.gameObject.CompareTag("Plant") && curMoveMode == MovementMode.Standing)
+                {
+                    animator.SetBool("chomp", true);
+                    StartCoroutine(AnimationCooldown("chomp"));
+                }
             }
         }
+    }
+
+    IEnumerator AnimationCooldown(string animation)
+    {
+        yield return new WaitForSecondsRealtime(1);
+        animator.SetBool(animation, false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

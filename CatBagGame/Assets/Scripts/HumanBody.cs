@@ -31,10 +31,12 @@ public class HumanBody : InteractableObject
     {
         canBeJumpscared = false;
         hb.gameObject.transform.Rotate(0, 180, 0);
+        hb.ToggleFacingDirection();
         //hb.GetComponent<Patrol>().MoveToggle = !hb.GetComponent<Patrol>().MoveToggle;
         hb.SeePlayer();
         yield return new WaitForSecondsRealtime(jumpscareCooldownSeconds);
         hb.GetComponent<Animator>().SetBool("Scared", false);
         hb.gameObject.transform.Rotate(0, 180, 0);
+        hb.ToggleFacingDirection();
     }
 }

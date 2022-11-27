@@ -9,6 +9,8 @@ TagManager:
   - HumanBody
   - LowObstacle
   - UnderObject
+  - Human
+  - Plant
   layers:
   - Default
   - TransparentFX

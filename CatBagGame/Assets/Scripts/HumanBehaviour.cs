@@ -121,9 +121,22 @@ public class HumanBehaviour : MonoBehaviour
         }
     }
 
+    public void ToggleFacingDirection()
+    {
+        if (curFd == FacingDirection.Right)
+        {
+            curFd = FacingDirection.Left;
+        }
+        else
+        {
+            curFd = FacingDirection.Right;
+        }
+    }
+
     IEnumerator ReturnToStart()
     {
         transform.Rotate(0, 180, 0);
+        ToggleFacingDirection();
         //GetComponent<Patrol>().MoveToggle = !//GetComponent<Patrol>().MoveToggle;
         Vector3 pos = transform.position;
         Debug.Log("return to start");
@@ -143,6 +156,7 @@ public class HumanBehaviour : MonoBehaviour
 
         //Debug.Log("patrol");
         transform.Rotate(0, 180, 0);
+        ToggleFacingDirection();
         //GetComponent<Patrol>().MoveToggle = !//GetComponent<Patrol>().MoveToggle;
         //GetComponent<Patrol>().StartCoroutine(//GetComponent<Patrol>().LerpToPoint(//GetComponent<Patrol>().PointB));
         CanSeePlayer = true;
