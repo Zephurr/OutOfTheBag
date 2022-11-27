@@ -40,23 +40,26 @@ public class BagBehaviour : InteractableObject
 
     public override void Interact()
     {
-        transform.parent = player.transform;
-        transform.localPosition = new Vector3(0, transform.localPosition.y);
-        if (player.GetComponent<PlayerBehaviour>().FacingRight)
+        if (player.GetComponent<PlayerBehaviour>().CanJump())
         {
-            spriteXOffset = Mathf.Abs(spriteXOffset);
-        }
-        else
-        {
-            spriteXOffset *= -1;
-        }
-        transform.GetChild(0).transform.localPosition = new Vector3(transform.localPosition.x + spriteXOffset, 0);
-        inBag = true;
-        player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+            transform.parent = player.transform;
+            transform.localPosition = new Vector3(0, transform.localPosition.y);
+            if (player.GetComponent<PlayerBehaviour>().FacingRight)
+            {
+                spriteXOffset = Mathf.Abs(spriteXOffset);
+            }
+            else
+            {
+                spriteXOffset *= -1;
+            }
+            transform.GetChild(0).transform.localPosition = new Vector3(transform.localPosition.x + spriteXOffset, 0);
+            inBag = true;
+            player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
 
-        player.GetComponent<PlayerBehaviour>().InBag = true;
+            player.GetComponent<PlayerBehaviour>().InBag = true;
 
-        hasBeenInteracted = true;
+            hasBeenInteracted = true;
+        }
     }
 
     void OutOfBag()

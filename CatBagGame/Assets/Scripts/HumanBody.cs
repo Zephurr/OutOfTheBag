@@ -7,6 +7,7 @@ public class HumanBody : InteractableObject
     HumanBehaviour hb;
     [SerializeField] float jumpscareCooldownSeconds;
     bool canBeJumpscared = true;
+    bool earnPoint = true;
     GameManager gm;
 
     private void Start()
@@ -19,7 +20,6 @@ public class HumanBody : InteractableObject
     {
         if (!hb.SeeingPlayer && canBeJumpscared)
         {
-            Debug.Log("jumpscare human");
             hb.GetComponent<Animator>().SetBool("Scared", true);
             gm.UpdateScore();
 
@@ -30,6 +30,7 @@ public class HumanBody : InteractableObject
     IEnumerator JumpscareCooldown()
     {
         canBeJumpscared = false;
+        earnPoint = false;
         hb.gameObject.transform.Rotate(0, 180, 0);
         hb.ToggleFacingDirection();
         //hb.GetComponent<Patrol>().MoveToggle = !hb.GetComponent<Patrol>().MoveToggle;
@@ -38,5 +39,6 @@ public class HumanBody : InteractableObject
         hb.GetComponent<Animator>().SetBool("Scared", false);
         hb.gameObject.transform.Rotate(0, 180, 0);
         hb.ToggleFacingDirection();
+        canBeJumpscared = true;
     }
 }

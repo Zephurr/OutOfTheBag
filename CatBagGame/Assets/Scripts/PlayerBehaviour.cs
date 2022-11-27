@@ -209,7 +209,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    bool CanJump()
+    public bool CanJump()
     {
         RaycastHit2D vertHitInfo1;
         RaycastHit2D vertHitInfo2;
