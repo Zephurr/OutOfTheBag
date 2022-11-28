@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private ParticleSystem scoreParticles;
+    [SerializeField] private GameObject pauseMenu;
 
     private int score = 0;
 
@@ -15,6 +16,14 @@ public class GameManager : MonoBehaviour
     {
         scoreParticles = GameObject.Find("ScoreGainParticles").GetComponent<ParticleSystem>();
         scoreText.text = "Mischievous Deeds: " + score;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            pauseMenu.SetActive(true);
+        }
     }
 
     public void UpdateScore()
